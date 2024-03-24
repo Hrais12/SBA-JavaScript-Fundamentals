@@ -153,4 +153,29 @@ const answer = checkSubmission("2023-03-07", "2023-02-27", 150,140)
 console.log(answer);
 
 
-  
+const calculateAverage=(learnerData) =>{
+    for (const learner of Object.values(learnerData)) {
+        let totalScore = 0;
+        let totalPossible = 0;
+        for (const [assignmentId, percentage] of Object.entries(learner.assignments)) {
+            const assignment = AssignmentGroup.assignments.find(assign => assign.id == assignmentId);
+            if (assignment) {
+                totalScore += assignment.points_possible * percentage;
+                totalPossible += assignment.points_possible;
+            }
+        }
+        if (totalPossible !== 0) {
+            learner.avg = totalScore / totalPossible; // Update the avg property
+        } else {
+            learner.avg = 0;
+        }
+    }
+
+}
+
+
+const validateAssignmentGroup=(CourseInfo, AssignmentGroup)=>{
+    if (AssignmentGroup.course_id !== CourseInfo.id) {
+        throw new Error("AssignmentGroup does not belong to the course.");
+    }
+  }
