@@ -134,9 +134,11 @@ const CourseInfo = {
   const checkSubmission=(submitted_at, due_at, points_possible, score) =>{
     const dueDate = new Date(due_at);
     const submissionDate = new Date(submitted_at);
+    const submissionDeadline = new Date(dueDate);
+    submissionDeadline.setDate(submissionDeadline.getDate() - 30);   // submissions that are more than 30 days before the due date will be skipped, while those within 30 days before the due date but before the due date itself will be processed normally.
 
     switch (true) {
-        case submissionDate < dueDate:
+        case submissionDate < submissionDeadline:
             return null;
         case submissionDate > dueDate:
             // If submission is late, deduct 10% of points possible
