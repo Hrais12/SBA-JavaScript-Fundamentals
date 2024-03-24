@@ -87,6 +87,7 @@ const CourseInfo = {
 
   
   const processSubmissions=(LearnerSubmissions) => {
+    try {
 
     const learnerData = {};
 
@@ -97,6 +98,11 @@ const CourseInfo = {
         const assignment_id = submission.assignment_id;
         const submitted_at = submission.submission.submitted_at;
         const score = submission.submission.score;
+
+         // Check if any of the required fields are missing or incorrectly formatted
+         if (!learner_id || !assignment_id || !submitted_at || isNaN(score)) {
+            throw new Error("Invalid submission data");
+        }
 
         const assignment = AssignmentGroup.assignments.find(assign => assign.id === assignment_id);
 
@@ -125,8 +131,11 @@ const CourseInfo = {
         submissionIndex++;
     }
     return learnerData;
-
+  } catch (error) {
+    console.error("An error occurred while processing learner submissions:", error);
+    return {}; // Return an empty object or handle the error accordingly
   }
+}
 
 
   const checkSubmission=(submitted_at, due_at, points_possible, score) =>{
