@@ -91,12 +91,47 @@ const CourseInfo = {
   const processSubmissions=(LearnerSubmissions) => {
 
     const learnerData = {};
+
+    let submissionIndex = 0;
+    while (submissionIndex < LearnerSubmissions.length) {
+        const submission = LearnerSubmissions[submissionIndex];
+        const learner_id = submission.learner_id;
+        const assignment_id = submission.assignment_id;
+        const submitted_at = submission.submission.submitted_at;
+        const score = submission.submission.score;
+
+        const assignment = AssignmentGroup.assignments.find(assign => assign.id === assignment_id);
+
+        if (!assignment) {
+            submissionIndex++; // Skip invalid assignments 
+            continue;
+        }
+        
     
+        // Check if submission is late and apply penalty if necessary
+        const submissionResult = checkSubmission(submitted_at, assignment.due_at, assignment.points_possible, score);
+        let modifiedScore = score; // Initialize modified score
+
+        if (submissionResult === null) {
+            submissionIndex++; // Skip processing this submission
+            continue;
+        }else if (submissionResult && submissionResult.late) {
+            modifiedScore = submissionResult.score; // Apply penalty
+        }
+        // creating an object for each learner if it doesn't already  exist
+        if (!learnerData[learner_id]) {   
+            learnerData[learner_id] = { id: learner_id, assignments: {} }; //used bracket notation to dynamically create or update a property in the learnerData object
+        }
+        learnerData[learner_id].assignments[assignment_id] = modifiedScore / assignment.points_possible;
+        
+        submissionIndex++;
+    }
+    return learnerData;
 
   }
 
 
-  function checkSubmission(submitted_at, due_at, points_possible, score) {
+  const checkSubmission=(submitted_at, due_at, points_possible, score) =>{
     const dueDate = new Date(due_at);
     const submissionDate = new Date(submitted_at);
 
