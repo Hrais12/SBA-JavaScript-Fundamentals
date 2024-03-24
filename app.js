@@ -77,17 +77,15 @@ const CourseInfo = {
   ];
 
 
-
-  const getLearnerData = (CourseInfo, AssignmentGroup, LearnerSubmissions) => {
-
-    const learnerData =[];
-
-
+  const validateAssignmentGroup=(CourseInfo, AssignmentGroup)=>{
+    if (AssignmentGroup.course_id !== CourseInfo.id) {
+        throw new Error("AssignmentGroup does not belong to the course.");
+    }
   }
 
-  const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
-  console.log(result);
 
+
+  
   const processSubmissions=(LearnerSubmissions) => {
 
     const learnerData = {};
@@ -173,9 +171,41 @@ const calculateAverage=(learnerData) =>{
 
 }
 
+const getLearnerData = (CourseInfo, AssignmentGroup, LearnerSubmissions) => {
 
-const validateAssignmentGroup=(CourseInfo, AssignmentGroup)=>{
-    if (AssignmentGroup.course_id !== CourseInfo.id) {
-        throw new Error("AssignmentGroup does not belong to the course.");
-    }
-  }
+    // Validate input data
+    validateAssignmentGroup(CourseInfo, AssignmentGroup);
+
+    const learnerData = processSubmissions(LearnerSubmissions);
+
+    calculateAverage(learnerData);
+
+    const result = Object.values(learnerData).map(learner => {
+       // Initialize an empty object to store formatted assignments
+       const formattedAssignments = {};
+       
+       // Iterate over each assignment entry in the learner's assignments
+       for (const [assignmentId, percentage] of Object.entries(learner.assignments)) {
+           // Format the percentage to three decimal places and store it in the formattedAssignments object
+           formattedAssignments[` ${assignmentId}`] = parseFloat(percentage.toFixed(3));
+       }
+       
+       
+       return {
+           // Include the learner's ID and average score
+           id: learner.id,
+           avg: parseFloat(learner.avg.toFixed(3)),
+           // Spread the formatted assignments into the result object
+           ...formattedAssignments
+       };
+   });
+   
+   // Return the resulting array
+   return result;
+
+
+ }
+
+ const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+ console.log(result);
+
