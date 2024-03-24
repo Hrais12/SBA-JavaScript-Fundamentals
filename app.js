@@ -76,14 +76,14 @@ const CourseInfo = {
     }
   ];
 
-
+//-------------------------------------------------------------------------------------------
   const validateAssignmentGroup=(CourseInfo, AssignmentGroup)=>{
     if (AssignmentGroup.course_id !== CourseInfo.id) {
         throw new Error("AssignmentGroup does not belong to the course.");
     }
   }
 
-
+//---------------------------------------------------------------------------------------
 
   
   const processSubmissions=(LearnerSubmissions) => {
@@ -137,7 +137,7 @@ const CourseInfo = {
   }
 }
 
-
+//------------------------------------------------------------------------------------------
   const checkSubmission=(submitted_at, due_at, points_possible, score) =>{
     const dueDate = new Date(due_at);
     const submissionDate = new Date(submitted_at);
@@ -159,6 +159,7 @@ const CourseInfo = {
 const answer = checkSubmission("2023-03-07", "2023-02-27", 150,140)
 console.log(answer);
 
+//-------------------------------------------------------------------------------------------
 
 const calculateAverage=(learnerData) =>{
     for (const learner of Object.values(learnerData)) {
@@ -179,7 +180,8 @@ const calculateAverage=(learnerData) =>{
     }
 
 }
-
+//---------------------------------------------------------------------------------------------
+// Main function to get learner data
 const getLearnerData = (CourseInfo, AssignmentGroup, LearnerSubmissions) => {
 
     // Validate input data
